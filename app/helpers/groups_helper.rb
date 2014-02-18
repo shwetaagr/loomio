@@ -18,7 +18,7 @@ module GroupsHelper
       ( group.created_at < 1.month.ago ) &&
       !group.has_subscription_plan? &&
       !group.has_manual_subscription? &&
-      !group.is_sub_group? &&
+      !group.is_a_subgroup? &&
       ( I18n.locale == :en )
   end
 

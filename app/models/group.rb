@@ -185,15 +185,16 @@ class Group < ActiveRecord::Base
     parent.users.sorted_by_name
   end
 
-  # would be nice if the following 4 methods were reduced to just one - is_sub_group
+  # would be nice if the following 3 methods were reduced to just one - is_subgroup
   # parent and top_level are the less nice terms
   #
-  def is_top_level?
-    parent.blank?
-  end
 
   def is_a_parent?
-    parent_id.nil?
+    parent_id.blank?
+  end
+
+  def is_top_level?
+    is_a_parent?
   end
 
   def is_a_subgroup?
