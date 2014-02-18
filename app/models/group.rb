@@ -114,7 +114,8 @@ class Group < ActiveRecord::Base
   has_one :subscription, dependent: :destroy
 
   delegate :include?, :to => :users, :prefix => true
-  delegate :users, :to => :parent, :prefix => true
+  delegate :users, :to => :parent, :prefix => true # mix: i don't think this is in use
+  delegate :members, :to => :parent, :prefix => true
   delegate :name, :to => :parent, :prefix => true
 
   paginates_per 20
@@ -168,6 +169,10 @@ class Group < ActiveRecord::Base
     self.privacy == 'hidden'
   end
 
+  def is_not_hidden?
+    self.privacy != 'hidden'
+  end
+
   def parent_is_hidden?
     parent.privacy == 'hidden'
   end
@@ -187,16 +192,12 @@ class Group < ActiveRecord::Base
     parent.blank?
   end
 
-  def is_sub_group?
-    parent.present?
-  end
-
   def is_a_parent?
-    parent.nil?
+    parent_id.nil?
   end
 
   def is_a_subgroup?
-    parent.present?
+    parent_id.present?
   end
 
   def admin_email
@@ -241,20 +242,8 @@ class Group < ActiveRecord::Base
     Membership.where(:user_id => user, :group_id => self).exists?
   end
 
-  def user_can_join? user
-    is_a_parent? || user_is_a_parent_member?(user)
-  end
-
-  def is_a_parent?
-    parent_id.nil?
-  end
-
-  def is_a_subgroup?
-    parent_id.present?
-  end
-
   def user_is_a_parent_member? user
-    user.group_membership(parent)
+    user.group_membership(parent).present?
   end
 
   def invitations_remaining
@@ -310,6 +299,10 @@ class Group < ActiveRecord::Base
 
   def is_hidden?
     privacy == "hidden"
+  end
+
+  def viewable_by_parent_members?
+    self.viewable_by_parent_members
   end
 
   private
