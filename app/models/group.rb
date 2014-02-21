@@ -54,7 +54,6 @@ class Group < ActiveRecord::Base
     includes(:discussions).where('discussions.last_comment_at > ?', time)
   }
 
-
   scope :created_earlier_than, lambda {|time| where('groups.created_at < ?', time) }
 
   scope :engaged, more_than_n_members(1).
