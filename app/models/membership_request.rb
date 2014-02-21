@@ -14,16 +14,13 @@ class MembershipRequest < ActiveRecord::Base
   belongs_to :responder, class_name: 'User'
 
   scope :pending, -> { where response: nil }
+  scope :requested_by, ->(user) { where requestor_id: user.id }
 
   delegate :admins,               to: :group, prefix: true
   delegate :members,              to: :group, prefix: true
   delegate :membership_requests,  to: :group, prefix: true
   delegate :members_invitable_by, to: :group, prefix: true
   delegate :name,                 to: :group, prefix: true
-
-  def self.from(user)
-    where(requestor_id: user.id).first
-  end
 
   def name
     if requestor.present?

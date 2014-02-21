@@ -44,7 +44,7 @@ module GroupsHelper
     else
       return if group.users_include?(current_user)
 
-      membership_request = group.membership_requests.pending.from(current_user)
+      membership_request = group.membership_requests.pending.requested_by(current_user).first
       if membership_request.present?
         cancel_membership_request_button(membership_request)
       else
